@@ -4,6 +4,7 @@ NCVERSION=12.0.4
 NCDB="ncdb"
 NCUSER="ncuser"
 NCUSERPASS="$(openssl rand -base64 12)"
+NCDIR="/var/www/html/nextcloud"
 clear
 #----------------------------- User Input --------------------------------------------------
 echo "Please enter root user MySQL password... (Password type prompt is hidden)"
@@ -13,12 +14,13 @@ echo "Entering custom parameters..."
 read -e -p "Desired database name for NextCloud... default is [$NCDB]: " -i "$NCDB" NCDB
 read -e -p "Desired user name for NextCloud... default is [$NCUSER]: " -i "$NCUSER" NCUSER
 read -e -p "Desired password for NextCloud user... default is [$NCUSERPASS]: " -i "$NCUSERPASS" NCUSERPASS
+read -e -p "Desired password for NextCloud user... default is [$NCDIR]: " -i "$NCDIR" NCDIR
 # Backup sequence start
 sudo mkdir /Backups
 mysqldump -hlocalhost -uroot -p${rootpasswd} ${NCDB}| gzip > /Backups/NextCloud_db_Backup.zip
 mysqldump -hlocalhost -uroot -p${rootpasswd} ${NCDB} > /Backups/nextcloud_Backup.sql
-sudo tar -cpzvf /Backups/nextcloud-config.tar.gz /var/www/nextcloud/config/
-sudo tar -cpvzf /Backups/nextcloud-data.tar.gz /var/www/nextcloud/data
+sudo tar -cpzvf /Backups/nextcloud-config.tar.gz $NCDIR/config/
+sudo tar -cpvzf /Backups/nextcloud-data.tar.gz $NCDIR/data
 # Backup sequence finish
 
 echo "Open up your web browser and navigate to URL: http://$IPADD/nextcloud." 
