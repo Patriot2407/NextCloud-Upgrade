@@ -1,9 +1,6 @@
 #!/bin/bash
 IPADD=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1 -d'/')
 NCVERSION=12.0.4
-NCDB="ncdb"
-NCUSER="ncuser"
-NCUSERPASS="$(openssl rand -base64 12)"
 NCDIR="/var/www/html/nextcloud"
 NCDIRNEW="/var/www/html/nextcloud/"
 clear
@@ -11,10 +8,6 @@ clear
 echo "Please enter root user MySQL password... (Password type prompt is hidden)"
 read -s rootpasswd
 mysql -uroot -p${rootpasswd} -e "show databases"
-echo "Entering custom parameters..."
-read -e -p "Desired database name for NextCloud... default is [$NCDB]: " -i "$NCDB" NCDB
-read -e -p "Desired user name for NextCloud... default is [$NCUSER]: " -i "$NCUSER" NCUSER
-read -e -p "Desired password for NextCloud user... default is [$NCUSERPASS]: " -i "$NCUSERPASS" NCUSERPASS
 read -e -p "NextCloud location... default is [$NCDIR]: " -i "$NCDIR" NCDIR
 # Backup sequence start
 sudo mkdir /Backups
@@ -38,6 +31,18 @@ sudo cp $NCDIR-old/config/config.php $NCDIRNEW/config/
 sudo cp -r $NCDIR-old/data $NCDIRNEW/data
 sudo systemctl restart apache2
 cd /var/www/html/nextcloud
-sudo -u www-data php occ upgrade
+# sudo -u www-data php occ upgrade
+# Upgrade sequence finish
 echo "Open up your web browser and navigate to URL: http://$IPADD/nextcloud." 
+echo "
+Sometimes, Nextcloud can get stuck in a upgrade if the web based upgrade process is used. This is usually due to the process taking too long and encountering a PHP time-out. Stop the upgrade process this way:
+
+sudo -u www-data php occ maintenance:mode --off
+Then start the manual process:
+
+sudo -u www-data php occ upgrade
+If this does not work properly, try the repair function:
+
+sudo -u www-data php occ maintenance:repair
+"
 exit 0
