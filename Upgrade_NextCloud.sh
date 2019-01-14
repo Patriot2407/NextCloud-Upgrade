@@ -1,6 +1,6 @@
 #!/bin/bash
 IPADD=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1 -d'/')
-NCVERSION=13.0.2
+NCVERSION=14.0.6
 NCDIR="/var/www/html/nextcloud"
 NCDIRNEW="/var/www/html/nextcloud/"
 clear
