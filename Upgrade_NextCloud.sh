@@ -1,6 +1,7 @@
 #!/bin/bash
 IPADD=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1 -d'/')
-NCVERSION=15.0.2
+#NCVERSION=15.0.2
+NCVERSION=15
 NCDIR="/var/www/html/nextcloud"
 NCDIRNEW="/var/www/html/nextcloud/"
 clear
@@ -21,10 +22,12 @@ sudo tar -cpvzf /Backups/nextcloud-apacheconfigs.tar.gz /etc/apache2/sites-avail
 mv $NCDIR $NCDIR-old
 sudo mkdir /tmp
 cd /tmp
-wget https://download.nextcloud.com/server/releases/nextcloud-$NCVERSION.zip
+# wget https://download.nextcloud.com/server/releases/nextcloud-$NCVERSION.zip
+wget https://download.nextcloud.com/server/releases/latest-$NCVERSION.zip 
 echo "Finished."
 echo "Unzipping NextCloud Binaries..."
-unzip nextcloud-$NCVERSION.zip
+# unzip nextcloud-$NCVERSION.zip
+unzip latest-$NCVERSION.zip
 sudo cp -r nextcloud/ /var/www/html/
 sudo chown -R apache:apache $NCDIRNEW
 sudo cp $NCDIR-old/config/config.php $NCDIRNEW/config/
