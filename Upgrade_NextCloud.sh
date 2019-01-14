@@ -11,8 +11,8 @@ mysql -uroot -p${rootpasswd} -e "show databases"
 read -e -p "NextCloud location... default is [$NCDIR]: " -i "$NCDIR" NCDIR
 # Backup sequence start
 sudo mkdir /Backups
-mysqldump -hlocalhost -uroot -p${rootpasswd} ${NCDB}| gzip > /Backups/NextCloud_db_Backup.zip
-mysqldump -hlocalhost -uroot -p${rootpasswd} ${NCDB} > /Backups/nextcloud_Backup.sql
+mysqldump -hlocalhost -uroot -p${rootpasswd} ${NCDB}| gzip > /Backups/`date +%F`-NextCloud_db_Backup.zip
+mysqldump -hlocalhost -uroot -p${rootpasswd} ${NCDB} > /Backups/`date +%F`-nextcloud_Backup.sql
 sudo tar -cpzvf /Backups/nextcloud-config.tar.gz $NCDIR/config/
 sudo tar -cpvzf /Backups/nextcloud-data.tar.gz $NCDIR/data
 sudo tar -cpvzf /Backups/nextcloud-apacheconfigs.tar.gz /etc/apache2/sites-available/nextcloud.conf
@@ -26,23 +26,23 @@ echo "Finished."
 echo "Unzipping NextCloud Binaries..."
 unzip nextcloud-$NCVERSION.zip
 sudo cp -r nextcloud/ /var/www/html/
-sudo chown -R www-data:www-data $NCDIRNEW
+sudo chown -R apache:apache $NCDIRNEW
 sudo cp $NCDIR-old/config/config.php $NCDIRNEW/config/
 sudo cp -r $NCDIR-old/data $NCDIRNEW/data
 sudo systemctl restart apache2
 cd /var/www/html/nextcloud
-# sudo -u www-data php occ upgrade
+# sudo -u apache php occ upgrade
 # Upgrade sequence finish
 echo "Open up your web browser and navigate to URL: http://$IPADD/nextcloud." 
 echo "
 Sometimes, Nextcloud can get stuck in a upgrade if the web based upgrade process is used. This is usually due to the process taking too long and encountering a PHP time-out. Stop the upgrade process this way:
 
-sudo -u www-data php occ maintenance:mode --off
+sudo -u apache php occ maintenance:mode --off
 Then start the manual process:
 
-sudo -u www-data php occ upgrade
+sudo -u apache php occ upgrade
 If this does not work properly, try the repair function:
 
-sudo -u www-data php occ maintenance:repair
+sudo -u apache php occ maintenance:repair
 "
 exit 0
